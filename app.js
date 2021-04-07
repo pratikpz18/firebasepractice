@@ -12,8 +12,40 @@ var firebaseConfig = {
   firebase.initializeApp(firebaseConfig);
 
   const pobj = document.getElementById("p");
+  const ulList = document.getElementById("ulList");
+  const input = document.getElementById("input");
+  const err = document.getElementById("err");
 
-  const dbref = firebase.database().ref().child('object');
 
-  dbref.on('value',snap => console.log(snap.val()));
-//   console.log('vv')
+//   const dbref = firebase.database().ref().child('object');
+  const dbrefList = firebase.database().ref().child('task');
+  const dbrefLis = firebase.database().ref('task');
+
+//   dbref.on('value',snap => {
+//       pobj.innerText = JSON.stringify(snap.val(),null,3);
+//   });
+
+function add(){
+    console.log(input.value);
+    console.log("add");
+    if(input.value!=""){
+        dbrefLis.push().set({
+            input:input.value,
+        });
+    }else{
+        err.innerText="Please provide some input" ;
+        setTimeout(()=>{
+            err.style.display='none';
+        },2000);
+    }
+    input.value="";
+}
+
+dbrefList.on('child_added',snap => {
+    console.log(snap.val().input)
+    const li = document.createElement('li');
+    li.innerText = snap.val().input;
+    li.id=snap.key;
+    ulList.append(li);
+});
+
