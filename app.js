@@ -41,11 +41,38 @@ function add(){
     input.value="";
 }
 
-dbrefList.on('child_added',snap => {
-    console.log(snap.val().input)
+dbrefLis.on('child_added',snap => {
+    console.log(snap.val().input,snap.key)
     const li = document.createElement('li');
     li.innerText = snap.val().input;
     li.id=snap.key;
+    li.innerHTML+= "<button onclick='edit(\""+snap.key+"\")'>Edit</button>";
+    li.innerHTML+= "<button onclick='remove(\""+snap.key+"\")'>Remove</button>";
     ulList.append(li);
 });
 
+function edit(key){
+    console.log("edit",key)
+    dbrefLis.child(key).set({
+        input:input.value,
+    });
+}
+
+function remove(key){
+    console.log("delete",key);
+    const liremoved = document.getElementById(key);
+    liremoved.style.display="none";
+    dbrefLis.child(key).remove();
+    // or
+    // dbrefLis.child(key).set(null);
+}
+
+dbrefLis.on('child_changed',snap => {
+    const lichanged = document.getElementById(snap.key);
+    lichanged.innerText = snap.val().input;
+});
+
+dbrefLis.on('child_removed',snap => {
+    const liremoved = document.getElementById(snap.key);
+    liremoved.innerText = snap.val().input;
+});
